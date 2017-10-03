@@ -1,0 +1,34 @@
+#include <msp430G2553.h>
+
+/*
+ * Ryan Drexel
+ * MSP430G2553 Simple Blink
+ * Created: 09 20 2017
+ * Updated: 09 29 2017
+ *
+ * Embedded Systems- Dr. Tang and Mr. T.
+ * main.c
+ */
+int main(void)
+{
+    WDTCTL = WDTPW | WDTHOLD;// stop watchdog timer
+    P1SEL &= ~(0x40);   //selecting Pins 6 as GPIO then
+    P1DIR |= ~(0x40);   //assigning it as output
+    P1OUT = 0x01;       //initialize Pin 6 on
+    unsigned int i;
+
+        while(1) //while (1) keeps the program from ending
+        {
+            i ++;   //constantly have a counter running and use if statements to poll for specific count values
+
+             //Pin0 gets flipped at i = FFFF
+
+            if (i == 0xFFFF)
+                {
+                    P1OUT ^= 0X01;
+                    i = 0;  //Reset the count when it reaches FFFF (max value).
+                }
+
+        }
+    return 0; //return is unreachable - we want this
+}

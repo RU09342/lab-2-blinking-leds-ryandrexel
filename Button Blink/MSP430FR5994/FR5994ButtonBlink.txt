@@ -1,0 +1,47 @@
+#include <msp430FR5994.h>
+
+/*
+ * Ryan Drexel
+ * MSP430FR5994 Button Blink
+ * Created: 09 25 2017
+ * Updated: 10 03 2017
+ *
+ * Embedded Systems- Dr. Tang and Mr. T.
+ * main.c
+ */
+
+/**
+ * main.c
+ */
+int main(void)
+{
+    WDTCTL=WDTPW|WDTHOLD;// stop watchdog timer
+
+    P5SEL&=~BIT6;   //Set the button pin to I/O
+    P1DIR&=~BIT1;   //Sets button1, pin1.3 as an input
+    P1REN|=BIT1;    //Enables the pullup resistor
+    P1OUT|=BIT1;    //Set the resistor to be a pullup resistor
+    P1DIR|=BIT1;    //sets the direction of pin 1 to output
+    P1OUT&=~BIT1;   //sets output high
+    P1DIR|=BIT0;    //sets the direction of pin 1 to output
+    P1OUT&=~BIT1;   //sets output high
+
+    while(1)
+    {
+        switch(P5IN & BIT6)//poll for input
+        {
+        case 0: //button up
+            //do nothing, delay
+            __delay_cycles(100000);
+            break;
+        case 8: //button down
+            P1OUT ^= (BIT0 | BIT1); //change the output, so if was on, now it's off
+            __delay_cycles(100000);
+            break;
+	default:    //in case something goes wrong, this makes it right again
+            P1OUT = BIT1;
+            P1OUT = BIT0;
+            break;
+        }
+    }
+}

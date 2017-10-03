@@ -1,0 +1,46 @@
+#include <msp430F5529.h>
+
+/*
+ * Ryan Drexel
+ * MSP430F5529 Multiple Blink
+ * Created: 09 22 2017
+ * Updated: 09 29 2017
+ *
+ * Embedded Systems- Dr. Tang and Mr. T.
+ * main.c
+ */
+int main(void)
+{
+    WDTCTL = WDTPW | WDTHOLD;// stop watchdog timer
+    P1SEL &= ~(BIT0);
+    P1SEL &= ~(BIT1);   //selecting Pins 1.0 and 9.7 as GPIO then
+    P1DIR |= ~(BIT0);   //assigning them as outputs
+    P1DIR |= ~(BIT1);
+    P1OUT = 0x01;	//initialize on
+    P1OUT = BIT1;
+    unsigned int i;
+
+        while(1) //while (1) keeps the program from ending
+        {
+            i ++;   //constantly have a counter running and use if statements to poll for specific count values
+
+            /*
+             *Pin6 gets flipped at i = 8000 and FFFF (8000 = half FFFF) and Pin0 only is flipped at FFFF
+             *So Pin6 is flipping at a frequency exactly twice that of Pin0.
+             */
+
+            if (i == 0x8000)
+                {
+                    P1OUT ^= 0x01;  //use P1OUT XOR= 1 to invert desired bits
+                }
+
+                if (i == 0xFFFF)
+                    {
+                        P1OUT ^= 0x01;
+			P1OUT ^= BIT1;
+                        i = 0;  //Reset the count when it reaches FFFF (max value).
+                    }
+
+        }
+    return 0; //return is unreachable - we want this
+}
